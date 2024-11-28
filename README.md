@@ -27,6 +27,46 @@
    - 文档生成后，可以通过 Read the Docs 提供的 URL 访问。
    - 例如，`https://google-cartographer.readthedocs.io/en/latest/pbstream_migration.html` 就是通过 Read the Docs 托管的文档页面。
 
+```c
+# Read the Docs configuration file for Sphinx projects
+# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
+
+# Required
+version: 2
+
+# Set the OS, Python version and other tools you might need
+build:
+  os: ubuntu-22.04
+  tools:
+    python: "2.7"
+    # You can also specify other tool versions:
+    # nodejs: "20"
+    # rust: "1.70"
+    # golang: "1.20"
+
+# Build documentation in the "docs/" directory with Sphinx
+sphinx:
+  configuration: docs/source/conf.py
+  # You can configure Sphinx to use a different builder, for instance use the dirhtml builder for simpler URLs
+  # builder: "dirhtml"
+  # Fail on all warnings to avoid broken references
+  # fail_on_warning: true
+
+# Optionally build your docs in additional formats such as PDF and ePub
+# formats:
+#   - pdf
+#   - epub
+
+# Optional but recommended, declare the Python requirements required
+# to build your documentation
+# See https://docs.readthedocs.io/en/stable/guides/reproducible-builds.html
+# python:
+#   install:
+#     - requirements: docs/requirements.txt
+```
+
+
+
 ### 示例配置
 
 假设你使用 Sphinx 生成文档，以下是一个简单的 `conf.py` 配置文件示例：
@@ -92,5 +132,24 @@ python -mvirtualenv $READTHEDOCS_VIRTUALENV_PATH
 python -m pip install --upgrade --no-cache-dir pip setuptools 
 python -m pip install --upgrade --no-cache-dir sphinx 
 python -m sphinx -T -b html -d _build/doctrees -D language=en . $READTHEDOCS_OUTPUT/html 
+```
+
+
+
+```txt
+git clone --no-single-branch --depth 50 https://github.com/cartographer-project/cartographer . 
+git checkout --force 105c034577220268cd28a304a185adbec46b729f 
+git clean -d -f -f 
+python2.7 -mvirtualenv  
+python -m pip install --upgrade --no-cache-dir pip setuptools 
+python -m pip install --upgrade --no-cache-dir  mock==1.0.1 pillow==5.4.1 alabaster>=0.7,<0.8,!=0.7.5 commonmark==0.8.1 recommonmark==0.5.0 sphinx<2 sphinx-rtd-theme<0.5 readthedocs-sphinx-ext<2.2 
+python -m sphinx -T -b html -d _build/doctrees -D language=en . _build/html 
+python -m sphinx -T -b readthedocssinglehtmllocalmedia -d _build/doctrees -D language=en . _build/localmedia 
+python -m sphinx -b latex -D language=en -d _build/doctrees . _build/latex 
+cat latexmkrc 
+latexmk -r latexmkrc -pdf -f -dvi- -ps- -jobname=google-cartographer -interaction=nonstopmode 
+mv -f docs/source/_build/latex/google-cartographer.pdf sphinx_pdf/google-cartographer.pdf 
+python -m sphinx -T -b epub -d _build/doctrees -D language=en . _build/epub 
+mv -f docs/source/_build/epub/Cartographer.epub sphinx_epub/google-cartographer.epub
 ```
 

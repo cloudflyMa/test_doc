@@ -16,6 +16,8 @@ build:
   jobs:
     post_install:
       - pip install sphinxcontrib.mermaid
+      - pip install myst-parser
+      - pip install sphinx_rtd_theme
 
 # Build documentation in the "docs/" directory with Sphinx
 sphinx:
